@@ -45,36 +45,46 @@
 
 def localize(colors, measurements, motions, sensor_right, p_move):
     # initializes p to a uniform distribution over a grid of the same dimensions as colors
+    if(len(measurements) != len(motions)):
+        raise ValueError, "error in seize"
     pinit = 1.0 / float(len(colors)) / float(len(colors[0]))
     p = [[pinit for row in range(len(colors[0]))] for col in range(len(colors))]
 
+
     for i in range(len(measurements)):
-        p = move(p,motions[i])
-        p = sense(p,measurements[i])
+        p = move(p,motions[i],p_move)
+        p = sense(p,measurements[i],colors,sensor_right)
     return p
 
 def show(p):
     rows = ['[' + ','.join(map(lambda x: '{0:.5f}'.format(x), r)) + ']' for r in p]
     print '[' + ',\n '.join(rows) + ']'
 
-def move(p, U):
-    q = []
+def move(p, motion, p_move):
+    p_stay = 1 - p_move
+    aux = [[0.0 for row in range(len(p[0]))] for col in range(len(p))]
     for i in range(len(p)):
-        s = 0.8 * p[(i-U)%len(p)] + 0.1 * p[(i-U-1)%len(p)] + 0.1 * p[(i-U+1)%len(p)]
-        q.append(s)
-    return q
+        for j in range(len(p[i])):
+            h = (i - motion[0]) % len(p)
+            v = (j - motion[1]) % len(p[i])
+            uh = (i - motion[0] - 1) % len(p)
+            uv = (j - motion[1] - 1) % len(p[i])
+            aux[i][j] = p_move * p[h][v] + p_stay * p[i][j]
+    return aux
 
-def sense(p, measurement, colors):
+def sense(p, measurement, colors, sensor_right):
+    sensor_wrong = 1 - sensor_right
     aux=[[0.0 for row in range(len(p[0]))] for col in range(len(p))]
     s = 0.0
     for i in range(len(p)):
         for j in range(len(p[i])):
             hit = (measurement == colors[i][j])
-            aux[i][j] =
-    s = sum(q)
-    for i in range(len(q)):
-        q[i] = q[i]/s
-    return q
+            aux[i][j] = (hit * sensor_right + (1 - hit) * sensor_wrong) * p[i][j]
+            s += aux[i][j]
+    for i in range(len(aux)):
+        for j in range(len(aux[i])):
+            aux[i][j] /= s
+    return aux
 #############################################################
 # For the following test case, your output should be 
 # [[0.01105, 0.02464, 0.06799, 0.04472, 0.02465],
@@ -89,9 +99,5 @@ colors = [['R', 'G', 'G', 'R', 'R'],
           ['R', 'R', 'R', 'R', 'R']]
 measurements = ['G', 'G', 'G', 'G', 'G']
 motions = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1]]
-sensor_right = 0.7
-sensor_wrong = 1 - sensor_right
-p_move = 0.8
-p_stay = 1 - p_move
-p = localize(colors, measurements, motions, sensor_right, p_move)
+p = localize(colors,measurements,motions,sensor_right = 0.7, p_move = 0.8)
 show(p)  # displays your answer

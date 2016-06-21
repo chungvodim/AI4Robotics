@@ -12,17 +12,17 @@ p=[0.2, 0.2, 0.2, 0.2, 0.2]
 world=['green', 'red', 'red', 'green', 'green']
 measurements = ['red', 'green']
 motions = [1,1]
-Z = 'red'
+measurement = 'red'
 pHit = 0.6
 pMiss = 0.2
 pExact = 0.8
 pOvershoot = 0.1
 pUndershoot = 0.1
 
-def sense(p, Z):
+def sense(p, measurement):
     q=[]
     for i in range(len(p)):
-        hit = (Z == world[i])
+        hit = (measurement == world[i])
         q.append(p[i] * (hit * pHit + (1-hit) * pMiss))
     s = sum(q)
     for i in range(len(q)):
@@ -35,10 +35,10 @@ for i in range(len(measurements)):
 print "--------------------------------"
 
 p=[0, 1, 0, 0, 0]
-def move(p, U):
+def move(p, motion):
     q = []
     for i in range(len(p)):
-        s = pExact * p[(i-U)%len(p)] + pOvershoot * p[(i-U-1)%len(p)] + pUndershoot * p[(i-U+1)%len(p)]
+        s = pExact * p[(i - motion) % len(p)] + pOvershoot * p[(i - motion - 1) % len(p)] + pUndershoot * p[(i - motion + 1) % len(p)]
         q.append(s)
     return q
 
