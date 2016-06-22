@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="791ee31e-cdbb-48f2-8d43-2deeac0dd9ba" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/KalmanMatrices.py" afterPath="$PROJECT_DIR$/KalmanMatrices.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/KalmanMatrices2.py" afterPath="$PROJECT_DIR$/KalmanMatrices2.py" />
     </list>
     <ignored path="AI4Robotics.iws" />
@@ -56,8 +57,8 @@
       <file leaf-file-name="KalmanMatrices.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/KalmanMatrices.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
-              <caret line="171" column="12" selection-start-line="171" selection-start-column="12" selection-end-line="171" selection-end-column="12" />
+            <state relative-caret-position="545">
+              <caret line="176" column="21" selection-start-line="176" selection-start-column="21" selection-end-line="176" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -66,8 +67,8 @@
       <file leaf-file-name="KalmanMatrices2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/KalmanMatrices2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="183" column="63" selection-start-line="183" selection-start-column="63" selection-end-line="183" selection-end-column="63" />
+            <state relative-caret-position="473">
+              <caret line="199" column="30" selection-start-line="199" selection-start-column="30" selection-end-line="199" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -630,16 +631,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/KalmanMatrices.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="171" column="12" selection-start-line="171" selection-start-column="12" selection-end-line="171" selection-end-column="12" />
+        <state relative-caret-position="545">
+          <caret line="176" column="21" selection-start-line="176" selection-start-column="21" selection-end-line="176" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/KalmanMatrices2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="183" column="63" selection-start-line="183" selection-start-column="63" selection-end-line="183" selection-end-column="63" />
+        <state relative-caret-position="473">
+          <caret line="199" column="30" selection-start-line="199" selection-start-column="30" selection-end-line="199" selection-end-column="30" />
           <folding />
         </state>
       </provider>
