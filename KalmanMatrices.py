@@ -143,8 +143,7 @@ class matrix:
 
 def kalman_filter(x, P):
     for n in range(len(measurements)):
-
-    # measurement updat
+        # measurement updat
         Z = matrix([[measurements[n]]])
         y = Z - (H * x)
         S = H * P * H.transpose() + R
