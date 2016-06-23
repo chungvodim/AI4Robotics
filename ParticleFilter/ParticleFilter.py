@@ -105,4 +105,28 @@ def eval(r, p):
 ####   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ####
 
 myrobot = robot()
+myrobot.set(30.0, 50.0, pi/2)
+myrobot = myrobot.move(-pi/2, 15.0)
+print myrobot.sense()
+myrobot = myrobot.move(-pi/2, 10.0)
+print myrobot.sense()
 
+myrobot = robot()
+myrobot = myrobot.move(0.1, 5.0)
+Z = myrobot.sense()
+
+N = 1000
+p = []
+for i in range(N):
+    x = robot()
+    x.set_noise(0.05, 0.05, 5.0)
+    p.append(x)
+
+p2 = []
+for i in range(N):
+    p2.append(p[i].move(0.1, 5.0))
+p = p2
+
+w = []
+#insert code here!
+print w #Please print w for grading purposes.
