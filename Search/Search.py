@@ -15,15 +15,14 @@
 #   0 = Navigable space
 #   1 = Occupied space
 
-grid = [[0, 0, 1, 0, 0, 0],
-        [0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0],
-        [0, 0, 1, 1, 1, 0],
+grid = [[0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 1, 1],
+        [1, 0, 1, 0, 0, 0],
         [0, 0, 0, 0, 1, 0]]
 init = [0, 0]
 goal = [len(grid)-1, len(grid[0])-1]
 cost = 1
-print grid[0]
 delta = [[-1, 0], # go up
          [ 0,-1], # go left
          [ 1, 0], # go down
@@ -51,8 +50,10 @@ delta_name = ['^', '<', 'v', '>']
 #             print "new open list:", [cost + 1, x, y + 1]
 #             search(grid, [x, y + 1], goal, cost + 1)
 
-def search():
+def search(grid,init,goal,cost):
     closed = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
+    # expand = [[-1 for row in range(len(grid[0]))] for col in range(len(grid))]
+    expand = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
     closed[init[0]][init[1]] = 1
     x = init[0]
     y = init[1]
@@ -62,7 +63,8 @@ def search():
 
     found = False # flag set when search complete
     resign = False # flag set if we can't find expand
-    while found is False and found is False:
+    count = 0
+    while not found and not resign:
         # check if we still have elements on the open list
         if len(open) == 0:
             resign = True
@@ -75,9 +77,12 @@ def search():
             x = next[1]
             y = next[2]
             g = next[0]
+            # expand[x][y] = count
+            # count += 1
             # check if we are done
             if x == goal[0] and y == goal[1]:
                 found = True
+                expand[x][y] = '*'
                 print next
             else:
                 # expand winning element and add to new open list
@@ -89,5 +94,10 @@ def search():
                             g2 = g + cost
                             open.append([g2,x2,y2])
                             closed[x2][y2] = 1
+                            expand[x][y] = delta_name[i]
+    return expand
 
-search()
+
+expand = search(grid,init,goal,cost)
+for i in range(len(expand)):
+        print expand[i]
