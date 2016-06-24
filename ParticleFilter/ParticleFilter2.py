@@ -132,7 +132,7 @@ class robot:
             x = cx + sin(orientation + turn) * r
             y = cy - cos(orientation + turn) * r
 
-            orientation = (orientation + turn) % 2 * pi
+            orientation = (orientation + turn) % (2.0 * pi)
             result.set(x, y, orientation)
         return result
 
