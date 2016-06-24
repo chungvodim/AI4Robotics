@@ -93,12 +93,48 @@ class robot:
     #   move along a section of a circular path according to motion
     #
 
-    def move(self, motion):  # Do not change the name of this function
+    # Do NOT add noise
+    # World is NOT cyclic. Robot is allowed to travel "out of bounds"
+    def move(self, motion, tolerance = 0.001):
+        dist = float(motion[1])
+        steering = float(motion[0]) #anpha
+        # validation
+        if steering > max_steering_angle:
+            raise ValueError, 'Exceeding max steering angle'
+        if dist < 0.0:
+            raise ValueError, 'Robot cant move backwards'
+        # make a clone
+        result = robot()
+        result.length = self.length
+        result.bearing_noise = self.bearing_noise
+        result.distance_noise = self.distance_noise
+        result.steering_noise = self.steering_noise
+        # random.gauss(mu, sigma)
+        steering2 = random.gauss(steering, self.steering_noise)
+        dist2 = random.gauss(dist, self.distance_noise)
 
-        # ADD CODE HERE
+        # excute motion
+        # orientation = theta
+        # turn = beta
+        turn = (dist2 / result.length) * tan(steering2)
+        if abs(turn) < tolerance:
+            # straight motion
+            result.x = self.x + (dist2 * cos(self.orientation))
+            result.y = self.y + (dist2 * sin(self.orientation))
+            result.orientation = (self.orientation + turn) % (2.0 * pi)
+        else:
+            orientation = self.orientation
+            # r = d/beta = l / tan(steering)
+            r = dist2 / turn
+            cx = self.x - sin(orientation) * r
+            cy = self.y + cos(orientation) * r
 
-        return result  # make sure your move function returns an instance
-        # of the robot class with the correct coordinates.
+            x = cx + sin(orientation + turn) * r
+            y = cy - cos(orientation + turn) * r
+
+            orientation = (orientation + turn) % 2 * pi
+            result.set(x, y, orientation)
+        return result
 
         ############## ONLY ADD/MODIFY CODE ABOVE HERE ####################
 
