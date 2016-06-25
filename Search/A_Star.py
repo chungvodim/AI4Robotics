@@ -14,10 +14,10 @@
 # ----------
 
 grid = [[0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 1, 1, 1, 1],
-        [1, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0]]
+        [0, 1, 1, 1, 0, 0],
+        [0, 1, 1, 1, 1, 0],
+        [0, 1, 1, 0, 0, 0],
+        [1, 1, 0, 0, 1, 0]]
 heuristic = [[9, 8, 7, 6, 5, 4],
              [8, 7, 6, 5, 4, 3],
              [7, 6, 5, 4, 3, 2],
@@ -76,7 +76,7 @@ def search(grid, init, goal, cost, heuristic):
             if x == goal[0] and y == goal[1]:
                 found = True
             else:
-                max = len(heuristic) * len(heuristic[0])
+                # max = len(heuristic) * len(heuristic[0])
                 for i in range(len(delta)):
                     x2 = x + delta[i][0]
                     y2 = y + delta[i][1]
@@ -85,7 +85,7 @@ def search(grid, init, goal, cost, heuristic):
                             g2 = g + cost
                             h2 = heuristic[x2][y2]
                             f2 = g2 + h2
-                            # max2 = heuristic[x2][y2] + g2
+                            max2 = heuristic[x2][y2] + g2
                             # if max2 < max:
                             #     max = max2
                             #     next = [f2, g2, h2, x2, y2]
