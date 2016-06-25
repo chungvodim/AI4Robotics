@@ -20,6 +20,8 @@ grid = [[0, 0, 0, 0, 0, 0],
         [0, 0, 1, 1, 1, 1],
         [1, 0, 1, 0, 0, 0],
         [0, 0, 0, 0, 1, 0]]
+print grid[0]
+print '------------------'
 init = [0, 0]
 goal = [len(grid)-1, len(grid[0])-1]
 cost = 1
@@ -51,9 +53,9 @@ delta_name = ['^', '<', 'v', '>']
 #             search(grid, [x, y + 1], goal, cost + 1)
 
 def search(grid,init,goal,cost):
-    closed = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
-    expand = [[-1 for row in range(len(grid[0]))] for col in range(len(grid))]
-    action = [[-1 for row in range(len(grid[0]))] for col in range(len(grid))]
+    closed = [[0 for col in range(len(grid[0]))] for row in range(len(grid))]
+    expand = [[-1 for col in range(len(grid[0]))] for row in range(len(grid))]
+    action = [[-1 for col in range(len(grid[0]))] for row in range(len(grid))]
     closed[init[0]][init[1]] = 1
     x = init[0]
     y = init[1]
@@ -94,7 +96,7 @@ def search(grid,init,goal,cost):
                             g2 = g + cost
                             open.append([g2,x2,y2])
                             closed[x2][y2] = 1
-                            action[x][y] = i
+                            action[x2][y2] = i
     return expand,action
 
 
@@ -104,16 +106,19 @@ for i in range(len(expand)):
 print '-------------------'
 for i in range(len(action)):
     print action[i]
-
-policy = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
+# delta = [[-1, 0],  # go up
+#          [0, -1],  # go left
+#          [1, 0],  # go down
+#          [0, 1]]  # go right
+policy = [[' ' for col in range(len(grid[0]))] for row in range(len(grid))]
 x = goal[0]
 y = goal[1]
 policy[x][y] = '*'
-# while x != init[0]and y != init[1]:
-#     x2 = x - delta[action[x][y]][0]
-#     y2 = y - delta[action[x][y]][1]
-#     policy[x2][y2] = delta_name[action[x][y]]
-#     x = x2
-#     y = y2
-# for i in range(len(policy)):
-#     print policy[i]
+while x != init[0] or y != init[1]:
+    x2 = x - delta[action[x][y]][0]
+    y2 = y - delta[action[x][y]][1]
+    policy[x2][y2] = delta_name[action[x][y]]
+    x = x2
+    y = y2
+for i in range(len(policy)):
+    print policy[i]
