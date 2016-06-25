@@ -26,7 +26,8 @@ delta_name = ['^', '<', 'v', '>']
 
 
 def compute_value(grid,goal,cost):
-    value = [[99 for row in range(len(grid[0]))] for col in range(len(grid))]
+    value = [[99 for col in range(len(grid[0]))] for row in range(len(grid))]
+    policy = [[' ' for col in range(len(grid[0]))] for row in range(len(grid))]
     change = True
 
     while change:
@@ -37,7 +38,7 @@ def compute_value(grid,goal,cost):
                 if goal[0] == x and goal[1] == y:
                     if value[x][y] > 0:
                         value[x][y] = 0
-
+                        policy[x][y] = '*'
                         change = True
 
                 elif grid[x][y] == 0:
@@ -47,12 +48,15 @@ def compute_value(grid,goal,cost):
 
                         if x2 >= 0 and x2 < len(grid) and y2 >= 0 and y2 < len(grid[0]) and grid[x2][y2] == 0:
                             v2 = value[x2][y2] + cost
-
                             if v2 < value[x][y]:
                                 change = True
                                 value[x][y] = v2
-    return value
+                                policy[x][y] = delta_name[a]
+    return value,policy
 
-value = compute_value(grid, goal, cost)
+value, policy = compute_value(grid, goal, cost)
+
 for i in range(len(value)):
     print value[i]
+for i in range(len(policy)):
+    print policy[i]
