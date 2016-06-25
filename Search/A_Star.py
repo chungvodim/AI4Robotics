@@ -13,10 +13,10 @@
 # the function should return the string 'fail'
 # ----------
 
-grid = [[0, 1, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0],
+grid = [[0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 1, 1],
+        [1, 0, 1, 0, 0, 0],
         [0, 0, 0, 0, 1, 0]]
 heuristic = [[9, 8, 7, 6, 5, 4],
              [8, 7, 6, 5, 4, 3],
@@ -49,8 +49,9 @@ def search(grid, init, goal, cost, heuristic):
     x = init[0]
     y = init[1]
     g = 0
-
-    open = [[g, x, y]]
+    h = heuristic[x][y]
+    f = g + h
+    open = [[f, g, h, x, y]]
 
     found = False  # flag that is set when search is complete
     resign = False  # flag set if we can't find expand
@@ -64,22 +65,37 @@ def search(grid, init, goal, cost, heuristic):
             open.sort()
             open.reverse()
             next = open.pop()
-            x = next[1]
-            y = next[2]
-            g = next[0]
+            f = next[0]
+            g = next[1]
+            h = next[2]
+            x = next[3]
+            y = next[4]
             expand[x][y] = count
             count += 1
 
             if x == goal[0] and y == goal[1]:
                 found = True
             else:
+                max = len(heuristic) * len(heuristic[0])
                 for i in range(len(delta)):
                     x2 = x + delta[i][0]
                     y2 = y + delta[i][1]
                     if x2 >= 0 and x2 < len(grid) and y2 >= 0 and y2 < len(grid[0]):
                         if closed[x2][y2] == 0 and grid[x2][y2] == 0:
                             g2 = g + cost
-                            open.append([g2, x2, y2])
+                            h2 = heuristic[x2][y2]
+                            f2 = g2 + h2
+                            # max2 = heuristic[x2][y2] + g2
+                            # if max2 < max:
+                            #     max = max2
+                            #     next = [f2, g2, h2, x2, y2]
+                            open.append([f2, g2, h2, x2, y2])
                             closed[x2][y2] = 1
+                # open.append(next)
 
     return expand
+
+expand = search(grid, init, goal, cost, heuristic)
+
+for i in range(len(expand)):
+    print expand[i]
