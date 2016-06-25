@@ -85,7 +85,7 @@ def search(grid, init, goal, cost, heuristic):
                             g2 = g + cost
                             h2 = heuristic[x2][y2]
                             f2 = g2 + h2
-                            max2 = heuristic[x2][y2] + g2
+                            # max2 = heuristic[x2][y2] + g2
                             # if max2 < max:
                             #     max = max2
                             #     next = [f2, g2, h2, x2, y2]
