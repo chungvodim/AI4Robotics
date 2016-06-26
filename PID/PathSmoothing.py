@@ -50,6 +50,7 @@ def smooth(path, weight_data=0.5, weight_smooth=0.1, tolerance=0.000001):
         for i in range(1, len(path) - 1):
             for j in range(len(path[0])):
                 aux = newpath[i][j]
+                # yi <- yi + alpha (xi - yi) + beta (yi + 1 + yi - 1 - 2 * yi)
                 newpath[i][j] += weight_data * (path[i][j] - newpath[i][j]) + weight_smooth * (newpath[i-1][j] + newpath[i+1][j] - (2 * newpath[i][j]))
                 change += abs(newpath[i][j] - aux)
     return newpath  # Leave this line for the grader!
