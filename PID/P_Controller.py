@@ -1,22 +1,15 @@
 # -----------
 # User Instructions
 # PID- Proportional Integral Derivative
-#
 # Implement a P controller by running 100 iterations
-# of robot motion. The desired trajectory for the
-# robot is the x-axis. The steering angle should be set
+# of robot motion. The steering angle should be set
 # by the parameter tau so that:
 #
-# steering = -tau * crosstrack_error
+# steering = -tau_p * CTE - tau_d * diff_CTE - tau_i * int_CTE
 #
-# Note that tau is called "param" in the function
-# below.
-#
-# Your code should print output that looks like
-# the output shown in the video. That is, at each step:
-# print myrobot, steering
-#
-# Only modify code at the bottom!
+# where the integrated crosstrack error (int_CTE) is
+# the sum of all the previous crosstrack errors.
+# This term works to cancel out steering drift.
 # ------------
 
 from math import *
@@ -156,11 +149,12 @@ def my_run(param1, param2):
         prev_y = myrobot.y
         print myrobot, steer
 
-def run(param1, param2):
+def run1(param1, param2):
     myrobot = robot()
     myrobot.set(0.0, 1.0, 0.0)
     speed = 1.0  # motion distance is equal to speed (we assume time = 1)
     N = 100
+    myrobot.set_steering_drift(10.0 / 180.0 * pi)
     cte = myrobot.y
     for i in range(N):
         diff_cte = myrobot.y - cte
@@ -169,6 +163,22 @@ def run(param1, param2):
         myrobot = myrobot.move(steer,speed)
         print myrobot, steer
 
-run(0.2, 3.0)  # call function with parameter tau of 0.1 and print results
+def run(param1, param2, param3):
+    myrobot = robot()
+    myrobot.set(0.0, 1.0, 0.0)
+    speed = 1.0 # motion distance is equal to speed (we assume time = 1)
+    N = 100
+    myrobot.set_steering_drift(10.0 / 180.0 * pi) # 10 degree bias, this will be added in by the move function, you do not need to add it below!
+    cte = myrobot.y
+    int_CTE = 0.0
+    for i in range(N):
+        diff_cte = myrobot.y - cte
+        cte = myrobot.y  # trajectory for the robot is the x-axis
+        int_CTE += cte
+        steer = - param1 * cte - param2 * diff_cte - param3 * int_CTE # minus : reduce the deviation; steering = -tau_p * CTE - tau_d * diff_CTE - tau_i * int_CTE
+        myrobot = myrobot.move(steer, speed)
+        print myrobot, steer
+
+run(0.2, 3.0, 0.004)
 print "------------------------"
-my_run(0.2, 3.0)  # call function with parameter tau of 0.1 and print results
+# my_run(0.2, 3.0)
