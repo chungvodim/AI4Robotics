@@ -205,12 +205,13 @@ def run(params, printflag=False):
             print myrobot, steer
     return err / float(N)
 
+
 def twiddle(tol=0.2):  # Make this tolerance bigger if you are timing out!
     ############## ADD CODE BELOW ####################
     n_params = 3
     dparams = [1.0 for row in range(n_params)]
     params = [0.0 for row in range(n_params)]
-    dparams[2] = 0.0
+
     best_error = run(params)
     n = 0
     while sum(dparams) > tol:
@@ -230,7 +231,6 @@ def twiddle(tol=0.2):  # Make this tolerance bigger if you are timing out!
                     params[i] += dparams[i]
                     dparams[i] *= 0.9
         n += 1
-    #     print 'Twiddle #', n, params, ' -> ', best_error
     best_error = run(params)
     print '\nFinal parameters: ', params, '\n -> ', best_error
     return best_error
