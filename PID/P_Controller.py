@@ -163,7 +163,7 @@ def run1(param1, param2):
         myrobot = myrobot.move(steer,speed)
         print myrobot, steer
 
-def run(param1, param2, param3):
+def run2(param1, param2, param3):
     myrobot = robot()
     myrobot.set(0.0, 1.0, 0.0)
     speed = 1.0 # motion distance is equal to speed (we assume time = 1)
@@ -179,6 +179,61 @@ def run(param1, param2, param3):
         myrobot = myrobot.move(steer, speed)
         print myrobot, steer
 
-run(0.2, 3.0, 0.004)
-print "------------------------"
-# my_run(0.2, 3.0)
+def run(params, printflag=False):
+    myrobot = robot()
+    myrobot.set(0.0, 1.0, 0.0)
+    speed = 1.0
+    err = 0.0
+    int_crosstrack_error = 0.0
+    N = 100
+    # myrobot.set_noise(0.1, 0.0)
+    myrobot.set_steering_drift(10.0 / 180.0 * pi)  # 10 degree steering error
+
+    crosstrack_error = myrobot.y
+
+    for i in range(N * 2):
+
+        diff_crosstrack_error = myrobot.y - crosstrack_error
+        crosstrack_error = myrobot.y
+        int_crosstrack_error += crosstrack_error
+
+        steer = - params[0] * crosstrack_error - params[1] * diff_crosstrack_error - int_crosstrack_error * params[2]
+        myrobot = myrobot.move(steer, speed)
+        if i >= N:
+            err += (crosstrack_error ** 2)
+        if printflag:
+            print myrobot, steer
+    return err / float(N)
+
+def twiddle(tol=0.2):  # Make this tolerance bigger if you are timing out!
+    ############## ADD CODE BELOW ####################
+    n_params = 3
+    dparams = [1.0 for row in range(n_params)]
+    params = [0.0 for row in range(n_params)]
+    dparams[2] = 0.0
+    best_error = run(params)
+    n = 0
+    while sum(dparams) > tol:
+        for i in range(len(params)):
+            params[i] += dparams[i]
+            err = run(params)
+            if err < best_error:
+                best_error = err
+                dparams[i] *= 1.1
+            else:
+                params[i] -= 2.0 * dparams[i]
+                err = run(params)
+                if err < best_error:
+                    best_error = err
+                    dparams[i] *= 1.1
+                else:
+                    params[i] += dparams[i]
+                    dparams[i] *= 0.9
+        n += 1
+    #     print 'Twiddle #', n, params, ' -> ', best_error
+    best_error = run(params)
+    print '\nFinal parameters: ', params, '\n -> ', best_error
+    return best_error
+
+# run([0.1, 3.0, 0.004], True)
+err = twiddle()
