@@ -137,7 +137,7 @@ class robot:
 # run - does a single control run
 
 
-def My_run(param1, param2):
+def my_run(param1, param2):
     myrobot = robot()
     myrobot.set(0.0, 1.0, 0.0)
     speed = 1.0  # motion distance is equal to speed (we assume time = 1)
@@ -161,12 +161,14 @@ def run(param1, param2):
     myrobot.set(0.0, 1.0, 0.0)
     speed = 1.0  # motion distance is equal to speed (we assume time = 1)
     N = 100
-    cte = 0.0
+    cte = myrobot.y
     for i in range(N):
         diff_cte = myrobot.y - cte
         cte = myrobot.y # trajectory for the robot is the x-axis
-        steer = - param1 * cte - param2 * diff_cte# minus : reduce the deviation
+        steer = - param1 * cte - param2 * diff_cte # minus : reduce the deviation
         myrobot = myrobot.move(steer,speed)
         print myrobot, steer
 
 run(0.2, 3.0)  # call function with parameter tau of 0.1 and print results
+print "------------------------"
+my_run(0.2, 3.0)  # call function with parameter tau of 0.1 and print results
