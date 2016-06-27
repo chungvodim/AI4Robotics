@@ -146,8 +146,7 @@ class plan:
 
 
 
-    def smooth(self, weight_data=0.1, weight_smooth=0.1,
-               tolerance=0.000001):
+    def smooth(self, weight_data=0.1, weight_smooth=0.1, tolerance=0.000001):
 
         if self.path == []:
             raise ValueError, "Run A* first before smoothing path"
@@ -165,20 +164,13 @@ class plan:
                 for j in range(len(self.path[0])):
                     aux = self.spath[i][j]
 
-                    self.spath[i][j] += weight_data * \
-                                        (self.path[i][j] - self.spath[i][j])
+                    self.spath[i][j] += weight_data * (self.path[i][j] - self.spath[i][j])
 
-                    self.spath[i][j] += weight_smooth * \
-                                        (self.spath[i - 1][j] + self.spath[i + 1][j]
-                                         - (2.0 * self.spath[i][j]))
+                    self.spath[i][j] += weight_smooth * (self.spath[i - 1][j] + self.spath[i + 1][j] - (2.0 * self.spath[i][j]))
                     if i >= 2:
-                        self.spath[i][j] += 0.5 * weight_smooth * \
-                                            (2.0 * self.spath[i - 1][j] - self.spath[i - 2][j]
-                                             - self.spath[i][j])
+                        self.spath[i][j] += 0.5 * weight_smooth * (2.0 * self.spath[i - 1][j] - self.spath[i - 2][j] - self.spath[i][j])
                     if i <= len(self.path) - 3:
-                        self.spath[i][j] += 0.5 * weight_smooth * \
-                                            (2.0 * self.spath[i + 1][j] - self.spath[i + 2][j]
-                                             - self.spath[i][j])
+                        self.spath[i][j] += 0.5 * weight_smooth * (2.0 * self.spath[i + 1][j] - self.spath[i + 2][j] - self.spath[i][j])
 
             change += abs(aux - self.spath[i][j])
 
@@ -237,8 +229,7 @@ class robot:
         for i in range(len(grid)):
             for j in range(len(grid[0])):
                 if grid[i][j] == 1:
-                    dist = sqrt((self.x - float(i)) ** 2 +
-                                (self.y - float(j)) ** 2)
+                    dist = sqrt((self.x - float(i)) ** 2 + (self.y - float(j)) ** 2)
                     if dist < 0.5:
                         self.num_collisions += 1
                         return False
@@ -253,8 +244,7 @@ class robot:
     #    steering = front wheel steering angle, limited by max_steering_angle
     #    distance = total distance driven, most be non-negative
 
-    def move(self, grid, steering, distance,
-             tolerance=0.001, max_steering_angle=pi / 4.0):
+    def move(self, grid, steering, distance, tolerance=0.001, max_steering_angle=pi / 4.0):
 
         if steering > max_steering_angle:
             steering = max_steering_angle
@@ -309,8 +299,7 @@ class robot:
 
     def sense(self):
 
-        return [random.gauss(self.x, self.measurement_noise),
-                random.gauss(self.y, self.measurement_noise)]
+        return [random.gauss(self.x, self.measurement_noise), random.gauss(self.y, self.measurement_noise)]
 
     # --------
     # measurement_prob
@@ -324,10 +313,8 @@ class robot:
         error_y = measurement[1] - self.y
 
         # calculate Gaussian
-        error = exp(- (error_x ** 2) / (self.measurement_noise ** 2) / 2.0) \
-                / sqrt(2.0 * pi * (self.measurement_noise ** 2))
-        error *= exp(- (error_y ** 2) / (self.measurement_noise ** 2) / 2.0) \
-                 / sqrt(2.0 * pi * (self.measurement_noise ** 2))
+        error = exp(- (error_x ** 2) / (self.measurement_noise ** 2) / 2.0) / sqrt(2.0 * pi * (self.measurement_noise ** 2))
+        error *= exp(- (error_y ** 2) / (self.measurement_noise ** 2) / 2.0) / sqrt(2.0 * pi * (self.measurement_noise ** 2))
 
         return error
 
@@ -347,8 +334,7 @@ class particles:
     #	creates particle set with given initial position
     #
 
-    def __init__(self, x, y, theta,
-                 steering_noise, distance_noise, measurement_noise, N=100):
+    def __init__(self, x, y, theta, steering_noise, distance_noise, measurement_noise, N=100):
         self.N = N
         self.steering_noise = steering_noise
         self.distance_noise = distance_noise
@@ -377,8 +363,7 @@ class particles:
             # orientation is tricky because it is cyclic. By normalizing
             # around the first particle we are somewhat more robust to
             # the 0=2pi problem
-            orientation += (((self.data[i].orientation
-                              - self.data[0].orientation + pi) % (2.0 * pi))
+            orientation += (((self.data[i].orientation - self.data[0].orientation + pi) % (2.0 * pi))
                             + self.data[0].orientation - pi)
         return [x / self.N, y / self.N, orientation / self.N]
 
@@ -430,8 +415,7 @@ def run(grid, goal, spath, params, printflag=False, speed=0.1, timeout=1000):
     myrobot = robot()
     myrobot.set(0., 0., 0.)
     myrobot.set_noise(steering_noise, distance_noise, measurement_noise)
-    filter = particles(myrobot.x, myrobot.y, myrobot.orientation,
-                       steering_noise, distance_noise, measurement_noise)
+    filter = particles(myrobot.x, myrobot.y, myrobot.orientation, steering_noise, distance_noise, measurement_noise)
 
     cte = 0.0
     err = 0.0
@@ -448,11 +432,18 @@ def run(grid, goal, spath, params, printflag=False, speed=0.1, timeout=1000):
 
         # start with the present robot estimate
         estimate = filter.get_position()
-
-        ### ENTER CODE HERE
-
-
-        # ----------------------------------------
+        # some basic vector calculations
+        dx = spath[index + 1][0] - spath[index][0]
+        dy = spath[index + 1][1] - spath[index][1]
+        drx = estimate[0] - spath[index][0]
+        dry = estimate[1] - spath[index][1]
+        # u is the robot estimate projects onto the path segment
+        u = (drx * dx + dry * dy) / (dx * dx + dy * dy)
+        # the cte is the estimate projected onto the normal of the path segment
+        cte = (dry * dx - drx * dy) / (dx * dx + dy * dy)
+        # pick the next path segment
+        if u > 1.0:
+            index += 1
 
 
         diff_cte += cte
