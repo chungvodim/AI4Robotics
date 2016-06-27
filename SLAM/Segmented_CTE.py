@@ -510,7 +510,7 @@ weight_smooth = 0.2
 p_gain = 2.0
 d_gain = 6.0
 
-print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, weight_data, weight_smooth, p_gain, d_gain)
+# print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, weight_data, weight_smooth, p_gain, d_gain)
 
 # Using twiddle to find best parameters
 def twiddle(init_params):
@@ -525,12 +525,9 @@ def twiddle(init_params):
     best_error = 0.0;
     for k in range(K):
         ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
-        if ret[0]:
-            best_error += ret[1] * 100 + ret[2]
-        else:
-            best_error += 99999
+        best_error += GetError(ret)
     best_error = float(best_error) / float(k + 1)
-    print best_error
+    # print best_error
 
     n = 0
     tol = 0.0000001
@@ -541,11 +538,8 @@ def twiddle(init_params):
             for k in range(K):
                 # ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3], best_error)
                 ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
-                if ret[0]:
-                    err += ret[1] * 100 + ret[2]
-                else:
-                    err += 99999
-            print float(err) / float(k + 1)
+                err += GetError(ret)
+            # print float(err) / float(k + 1)
             if err < best_error:
                 best_error = float(err) / float(k + 1)
                 dparams[i] *= 1.1
@@ -555,11 +549,8 @@ def twiddle(init_params):
                 for k in range(K):
                     # ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3], best_error)
                     ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
-                    if ret[0]:
-                        err += ret[1] * 100 + ret[2]
-                    else:
-                        err += 99999
-                print float(err) / float(k + 1)
+                    err += GetError(ret)
+                # print float(err) / float(k + 1)
                 if err < best_error:
                     best_error = float(err) / float(k + 1)
                     dparams[i] *= 1.1
@@ -572,12 +563,13 @@ def twiddle(init_params):
     return params
 
 def GetError(ret):
-    err = 0
     if ret[0]:
-        err += ret[1] * 100 + ret[2]
+        return ret[1] * 100 + ret[2]
     else:
-        err += 99999
-    return err
+        return 99999
 
-params = twiddle([weight_data, weight_smooth, p_gain, d_gain])
-print 'best params', params
+# params = twiddle([weight_data, weight_smooth, p_gain, d_gain])
+# print 'best params', params
+# print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
+print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, 0.10000000000000009, 0.19999999999999996, 2.0, 6.0)
+# print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, 0.00011345870499847816, 0.059547275870499926, 3.3205086077857686, 5.652317975118982)
