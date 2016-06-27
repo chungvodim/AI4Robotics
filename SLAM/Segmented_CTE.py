@@ -40,12 +40,10 @@ class plan:
     # make heuristic function for a grid
 
     def make_heuristic(self, grid, goal, cost):
-        self.heuristic = [[0 for row in range(len(grid[0]))]
-                          for col in range(len(grid))]
+        self.heuristic = [[0 for row in range(len(grid[0]))]for col in range(len(grid))]
         for i in range(len(self.grid)):
             for j in range(len(self.grid[0])):
-                self.heuristic[i][j] = abs(i - self.goal[0]) + \
-                                       abs(j - self.goal[1])
+                self.heuristic[i][j] = abs(i - self.goal[0]) + abs(j - self.goal[1])
 
     # ------------------------------------------------
     #
@@ -66,10 +64,8 @@ class plan:
 
         # open list elements are of the type: [f, g, h, x, y]
 
-        closed = [[0 for row in range(len(self.grid[0]))]
-                  for col in range(len(self.grid))]
-        action = [[0 for row in range(len(self.grid[0]))]
-                  for col in range(len(self.grid))]
+        closed = [[0 for row in range(len(self.grid[0]))] for col in range(len(self.grid))]
+        action = [[0 for row in range(len(self.grid[0]))] for col in range(len(self.grid))]
 
         closed[self.init[0]][self.init[1]] = 1
 
@@ -112,8 +108,7 @@ class plan:
                 for i in range(len(delta)):
                     x2 = x + delta[i][0]
                     y2 = y + delta[i][1]
-                    if x2 >= 0 and x2 < len(self.grid) and y2 >= 0 \
-                            and y2 < len(self.grid[0]):
+                    if x2 >= 0 and x2 < len(self.grid) and y2 >= 0 and y2 < len(self.grid[0]):
                         if closed[x2][y2] == 0 and self.grid[x2][y2] == 0:
                             g2 = g + self.cost
                             h2 = self.heuristic[x2][y2]

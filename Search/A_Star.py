@@ -18,11 +18,16 @@ grid = [[0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 1, 0],
         [0, 1, 1, 0, 0, 0],
         [1, 1, 0, 0, 1, 0]]
-heuristic = [[9, 8, 7, 6, 5, 4],
-             [8, 7, 6, 5, 4, 3],
-             [7, 6, 5, 4, 3, 2],
-             [6, 5, 4, 3, 2, 1],
-             [5, 4, 3, 2, 1, 0]]
+# heuristic = [[9, 8, 7, 6, 5, 4],
+#              [8, 7, 6, 5, 4, 3],
+#              [7, 6, 5, 4, 3, 2],
+#              [6, 5, 4, 3, 2, 1],
+#              [5, 4, 3, 2, 1, 0]]
+cost = [[1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1]]
 
 init = [0, 0]
 goal = [len(grid) - 1, len(grid[0]) - 1]
@@ -35,6 +40,13 @@ delta = [[-1, 0],  # go up
 
 delta_name = ['^', '<', 'v', '>']
 
+
+def make_heuristic(grid, goal, cost):
+    heuristic = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            heuristic[i][j] = abs(i - goal[0]) + abs(j - goal[1])
+    return heuristic
 
 def search(grid, init, goal, cost, heuristic):
     # ----------------------------------------
@@ -91,11 +103,28 @@ def search(grid, init, goal, cost, heuristic):
                             #     next = [f2, g2, h2, x2, y2]
                             open.append([f2, g2, h2, x2, y2])
                             closed[x2][y2] = 1
+                            action[x2][y2] = i
                 # open.append(next)
+    invpath = []
+    x = goal[0]
+    y = goal[1]
+    invpath.append([x, y])
+    while x != init[0] or y != init[1]:
+        x2 = x - delta[action[x][y]][0]
+        y2 = y - delta[action[x][y]][1]
+        x = x2
+        y = y2
+        invpath.append([x, y])
 
-    return expand
+    path = []
+    for i in range(len(invpath)):
+        path.append(invpath[len(invpath) - 1 - i])
+    return expand,path
 
-expand = search(grid, init, goal, cost, heuristic)
+heuristic = make_heuristic(grid, goal, cost)
+expand,path = search(grid, init, goal, cost, heuristic)
 
 for i in range(len(expand)):
     print expand[i]
+for i in range(len(path)):
+    print path[i]
