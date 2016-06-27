@@ -438,9 +438,11 @@ def run(grid, goal, spath, params, printflag=False, speed=0.1, timeout=1000):
         drx = estimate[0] - spath[index][0]
         dry = estimate[1] - spath[index][1]
         # u is the robot estimate projects onto the path segment
-        u = (drx * dx + dry * dy) / (dx * dx + dy * dy)
+        # u = (drx * dx + dry * dy) / (dx * dx + dy * dy)
+        u = (drx * dx + dry * dy) / sqrt(dx * dx + dy * dy)
         # the cte is the estimate projected onto the normal of the path segment
-        cte = (dry * dx - drx * dy) / (dx * dx + dy * dy)
+        # cte = (dry * dx - drx * dy) / (dx * dx + dy * dy)
+        cte = (dry * dx - drx * dy) / sqrt(dx * dx + dy * dy)
         # pick the next path segment
         if u > 1.0:
             index += 1
@@ -473,8 +475,7 @@ def run(grid, goal, spath, params, printflag=False, speed=0.1, timeout=1000):
 # this is our main routine
 #
 
-def main(grid, init, goal, steering_noise, distance_noise, measurement_noise,
-         weight_data, weight_smooth, p_gain, d_gain):
+def main(grid, init, goal, steering_noise, distance_noise, measurement_noise, weight_data, weight_smooth, p_gain, d_gain):
     path = plan(grid, init, goal)
     path.astar()
     path.smooth(weight_data, weight_smooth)
@@ -509,10 +510,9 @@ weight_smooth = 0.2
 p_gain = 2.0
 d_gain = 6.0
 
-print main(grid, init, goal, steering_noise, distance_noise, measurement_noise,
-           weight_data, weight_smooth, p_gain, d_gain)
+print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, weight_data, weight_smooth, p_gain, d_gain)
 
-
+# Using twiddle to find best parameters
 def twiddle(init_params):
     n_params = len(init_params)
     dparams = [1.0 for row in range(n_params)]
@@ -524,9 +524,7 @@ def twiddle(init_params):
 
     best_error = 0.0;
     for k in range(K):
-        ret = main(grid, init, goal,
-                   steering_noise, distance_noise, measurement_noise,
-                   params[0], params[1], params[2], params[3])
+        ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
         if ret[0]:
             best_error += ret[1] * 100 + ret[2]
         else:
@@ -535,14 +533,14 @@ def twiddle(init_params):
     print best_error
 
     n = 0
-    while sum(dparams) > 0.0000001:
+    tol = 0.0000001
+    while sum(dparams) > tol:
         for i in range(len(params)):
             params[i] += dparams[i]
             err = 0
             for k in range(K):
-                ret = main(grid, init, goal,
-                           steering_noise, distance_noise, measurement_noise,
-                           params[0], params[1], params[2], params[3], best_error)
+                # ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3], best_error)
+                ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
                 if ret[0]:
                     err += ret[1] * 100 + ret[2]
                 else:
@@ -555,9 +553,8 @@ def twiddle(init_params):
                 params[i] -= 2.0 * dparams[i]
                 err = 0
                 for k in range(K):
-                    ret = main(grid, init, goal,
-                               steering_noise, distance_noise, measurement_noise,
-                               params[0], params[1], params[2], params[3], best_error)
+                    # ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3], best_error)
+                    ret = main(grid, init, goal, steering_noise, distance_noise, measurement_noise, params[0], params[1], params[2], params[3])
                     if ret[0]:
                         err += ret[1] * 100 + ret[2]
                     else:
@@ -574,4 +571,13 @@ def twiddle(init_params):
     print ' '
     return params
 
-# twiddle([weight_data, weight_smooth, p_gain, d_gain])
+def GetError(ret):
+    err = 0
+    if ret[0]:
+        err += ret[1] * 100 + ret[2]
+    else:
+        err += 99999
+    return err
+
+params = twiddle([weight_data, weight_smooth, p_gain, d_gain])
+print 'best params', params
