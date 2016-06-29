@@ -7,7 +7,15 @@
 # discussed in lecture and should RETURN the mu vector
 # (which is the product of Omega.inverse() and Xi).
 #
-# Please enter your code at the bottom.
+# Modify your doit function to incorporate 3
+# distance measurements to a landmark(Z0, Z1, Z2).
+# You should use the provided expand function to
+# allow your Omega and Xi matrices to accomodate
+# the new information.
+#
+# Each landmark measurement should modify 4
+# values in your Omega matrix and 2 in your
+# Xi vector.
 
 
 
@@ -350,10 +358,10 @@ def doit(initial_pos, move1, move2, Z0, Z1, Z2):
 
     Omega += matrix([[0., 0., 0., 0.],
                      [0., 0., 0., 0.],
-                     [0., 0., 1., -1.],
-                     [0., 0., -1., 1.]])
+                     [0., 0., 5., -5.],
+                     [0., 0., -5., 5.]])
 
-    Xi += matrix([[0], [0], [-Z2], [Z2]])
+    Xi += matrix([[0], [0], [-Z2 * 5], [Z2 * 5]])
 
     Omega.show('Omega: ')
     Xi.show('Xi: ')
