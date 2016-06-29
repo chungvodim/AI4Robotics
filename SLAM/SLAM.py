@@ -501,23 +501,36 @@ def print_result(N, num_landmarks, result):
 ############## ENTER YOUR CODE BELOW HERE ###################
 
 def slam(data, N, num_landmarks, motion_noise, measurement_noise):
-    #
-    #
-    # Add your code here!
-    #
-    #
-    return mu  # Make sure you return mu for grading!
+    # set the dimension of the filter
+    # times 2 : modeling x and y
+    dim = 2 * (N + num_landmarks)
+    # make the constraint information matrix and vector
+    Omega = matrix()
+    Omega.zero(dim,dim)
+    Omega.value[0][0] = 1.0
+    Omega.value[1][1] = 1.0
 
+    Xi = matrix()
+    Xi.zero(dim,1)
+    Xi.value[0][0] = world_size / 2.0
+    Xi.value[1][0] = world_size / 2.0
 
-############### ENTER YOUR CODE ABOVE HERE ###################
+    # process data
+    for k in range(len(data)):
+        # n is the index of robot pose in the matrix/vector
+        n = k * 2
+        measurement = data[k][0]
+        motion = data[k][1]
+        # integrate the measurements
 
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
-#
-# Main routines
-#
-
+        for i in range(len(measurement)):
+            # m is the index of landmark coordinate in the matrix/vector
+            m = 2 * (N + measurement[i][0])
+            # update the information matrix/vector based on the measurement
+            for b in range(2):
+                Omega.value[n+b][n+b] += 1.0 / measurement_noise
+                Omega.value[m+b][m+b] += 1.0 / measurement_noise
+                Omega.value[n+b][n+b] += -1.0 / measurement_noise
 
 num_landmarks = 5  # number of landmarks
 N = 20  # time steps
