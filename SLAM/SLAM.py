@@ -530,7 +530,10 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
             for b in range(2):
                 Omega.value[n+b][n+b] += 1.0 / measurement_noise
                 Omega.value[m+b][m+b] += 1.0 / measurement_noise
-                Omega.value[n+b][n+b] += -1.0 / measurement_noise
+                Omega.value[n+b][m+b] += -1.0 / measurement_noise
+                Omega.value[m+b][n+b] += -1.0 / measurement_noise
+                Xi.value[n+b][0] += -measurement[i][1+b] / measurement_noise
+                Xi.value[m+b][0] += measurement[i][1+b] / measurement_noise
         # update the information matrix/vector based on robot motion
         for b in range(4):
             Omega.value[n+b][n+b] += 1.0 / motion_noise
