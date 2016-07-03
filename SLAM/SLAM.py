@@ -505,15 +505,15 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
     # times 2 : modeling x and y
     dim = 2 * (N + num_landmarks)
     # make the constraint information matrix and vector
-    Omega = matrix()
-    Omega.zero(dim,dim)
-    Omega.value[0][0] = 1.0
-    Omega.value[1][1] = 1.0
+    omega = matrix()
+    omega.zero(dim, dim)
+    omega.value[0][0] = 1.0
+    omega.value[1][1] = 1.0
 
-    Xi = matrix()
-    Xi.zero(dim,1)
-    Xi.value[0][0] = world_size / 2.0
-    Xi.value[1][0] = world_size / 2.0
+    xi = matrix()
+    xi.zero(dim, 1)
+    xi.value[0][0] = world_size / 2.0
+    xi.value[1][0] = world_size / 2.0
 
     # process data
     for k in range(len(data)):
@@ -528,21 +528,21 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
             m = 2 * (N + measurement[i][0])
             # update the information matrix/vector based on the measurement
             for b in range(2):
-                Omega.value[n+b][n+b] += 1.0 / measurement_noise
-                Omega.value[m+b][m+b] += 1.0 / measurement_noise
-                Omega.value[n+b][m+b] += -1.0 / measurement_noise
-                Omega.value[m+b][n+b] += -1.0 / measurement_noise
-                Xi.value[n+b][0] += -measurement[i][1+b] / measurement_noise
-                Xi.value[m+b][0] += measurement[i][1+b] / measurement_noise
+                omega.value[n+b][n+b] += 1.0 / measurement_noise
+                omega.value[m+b][m+b] += 1.0 / measurement_noise
+                omega.value[n+b][m+b] += -1.0 / measurement_noise
+                omega.value[m+b][n+b] += -1.0 / measurement_noise
+                xi.value[n+b][0] += -measurement[i][1+b] / measurement_noise
+                xi.value[m+b][0] += measurement[i][1+b] / measurement_noise
         # update the information matrix/vector based on robot motion
         for b in range(4):
-            Omega.value[n+b][n+b] += 1.0 / motion_noise
+            omega.value[n+b][n+b] += 1.0 / motion_noise
         for b in range(2):
-            Omega.value[n+b][n+b+2] += -1.0/motion_noise
-            Omega.value[n+b+2][n+b] += -1.0/motion_noise
-            Xi.value[n+b][0] += -motion[b]/motion_noise
-            Xi.value[n+b+2][0] += motion[b]/motion_noise
-    mu = Omega.inverse() * Xi
+            omega.value[n+b][n+b+2] += -1.0/motion_noise
+            omega.value[n+b+2][n+b] += -1.0/motion_noise
+            xi.value[n+b][0] += -motion[b]/motion_noise
+            xi.value[n+b+2][0] += motion[b]/motion_noise
+    mu = omega.inverse() * xi
     return mu
 
 num_landmarks = 5  # number of landmarks
